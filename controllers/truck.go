@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"fmt"
+
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -19,7 +21,41 @@ func GetTrucks(c *fiber.Ctx) error {
 	})
 }
 
+func AddTruck(c *fiber.Ctx) error {
+	type Request struct {
+		Name string `json:"name"`
+	}
+
+	var body Request
+
+	err := c.BodyParser(&body)
+
+	if err != nil {
+		fmt.Println(err)
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Cannot parse JSON",
+		})
+	}
+
+	truck := &Truck{
+		Id:        5,
+		TruckType: "",
+		Name:      body.Name,
+	}
+
+	// TODO: add truck to db
+
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"success": true,
+		"data": fiber.Map{
+			"truck": truck,
+		},
+	})
+}
+
 func getTrucksOfUser() []*Truck {
+	// TODO: really, get trucks of user
 	var trucks = []*Truck{
 		{
 			Id:        1,
